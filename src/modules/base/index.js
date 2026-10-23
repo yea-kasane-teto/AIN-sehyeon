@@ -1,4 +1,3 @@
-import './base.css';
 import { renderBaseLesson } from './lessons/base-01.js';
 
 export const title = 'AI 기초';
