@@ -1,21 +1,22 @@
-import { renderBaseLesson } from './lessons/base-01.js';
+(() => {
+const renderBaseLesson = window.AINBaseLesson.render;
 
-export const title = 'AI 기초';
+const title = 'AI 기초';
 
-export function render(root) {
+function render(root) {
   root.innerHTML = `
     <div class="learning-app" id="top">
       <header class="topbar">
-        <a class="brand" href="./?module=base" aria-label="AIN AI 기초 홈">
-          <img class="brand-logo" src="./assets/ain-logo.png" alt="AIN 로고" />
-          <span class="brand-name"><strong>AIN</strong><small>AI LEARNING AREA</small></span>
+        <a class="brand" href="https://yea-kasane-teto.github.io/AIN-main/" aria-label="AIN 메인 화면으로 이동">
+          <img class="brand-logo" src="./assets/ain-wordmark.png" alt="AIN 로고" width="90" height="58" />
+          <span class="brand-copy"><strong>AIN</strong><small>AI에 들어가다</small></span>
         </a>
         <label class="search-wrap" for="Search-bar">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.4 15.4 4.2 4.2"/></svg>
           <input id="Search-bar" type="search" placeholder="AI 기초 내용 검색" autocomplete="off" />
-          <kbd>Search-bar</kbd>
+          <kbd>/</kbd>
         </label>
-        <a class="home-link" href="https://github.com/yea-kasane-teto/AIN-main">AIN 메인 <span aria-hidden="true">↗</span></a>
+        <a class="home-link" href="https://yea-kasane-teto.github.io/AIN-main/">AIN 메인 <span aria-hidden="true">←</span></a>
       </header>
 
       <main>
@@ -43,7 +44,7 @@ export function render(root) {
           <aside class="course-sidebar" aria-label="AI 기초 목차">
             <div class="sidebar-heading"><span>AI 기초 목차</span><small>BASE</small></div>
             <nav class="lesson-nav" id="lessonNavigation">
-              <a href="#concepts" data-nav-section="concepts"><span class="nav-number">01</span><span>AI · ML · DL의 관계</span></a>
+              <a class="is-active" href="#concepts" data-nav-section="concepts"><span class="nav-number">01</span><span>AI · ML · DL의 관계</span></a>
               <a href="#features" data-nav-section="features"><span class="nav-number">02</span><span>특징을 찾는 방법</span></a>
               <a href="#pipeline" data-nav-section="pipeline"><span class="nav-number">03</span><span>AI가 배우는 과정</span></a>
               <a href="#experiment" data-nav-section="experiment"><span class="nav-number">04</span><span>가중치 업데이트 실험</span></a>
@@ -57,7 +58,7 @@ export function render(root) {
         <div class="search-empty" id="searchEmpty" hidden><strong>검색 결과가 없어요.</strong><span>다른 단어로 다시 찾아보세요.</span></div>
       </main>
 
-      <footer class="site-footer"><a class="footer-brand" href="#top"><img src="./assets/ain-logo.png" alt="AIN 로고" /><span>AI LEARNING AREA</span></a><span>처음 배우는 AI, 원리부터 차근차근</span></footer>
+      <footer class="site-footer"><a class="footer-brand" href="#top">AIN <span>AI LEARNING AREA</span></a><span>처음 배우는 AI, 원리부터 차근차근</span></footer>
     </div>`;
 
   const content = root.querySelector('#lessonContent');
@@ -68,8 +69,13 @@ export function render(root) {
 
 function updateProgress(root, isComplete = null) {
   const key = 'ain-progress:base-01';
-  const complete = isComplete === null ? localStorage.getItem(key) === 'done' : isComplete;
-  if (isComplete !== null) localStorage.setItem(key, complete ? 'done' : '');
+  let complete = Boolean(isComplete);
+  try {
+    complete = isComplete === null ? localStorage.getItem(key) === 'done' : isComplete;
+    if (isComplete !== null) localStorage.setItem(key, complete ? 'done' : '');
+  } catch {
+    if (isComplete === null) complete = false;
+  }
   const track = root.querySelector('.progress-track');
   const fill = root.querySelector('#progressFill');
   const label = root.querySelector('#progressLabel');
@@ -92,7 +98,7 @@ function setupSearch(root) {
   const empty = root.querySelector('#searchEmpty');
   const sections = [...root.querySelectorAll('[data-searchable]')];
   const links = [...root.querySelectorAll('[data-nav-section]')];
-  input.addEventListener('input', () => {
+  const filterLessons = () => {
     const query = input.value.trim().toLocaleLowerCase('ko');
     let visibleCount = 0;
     sections.forEach((section) => {
@@ -105,5 +111,33 @@ function setupSearch(root) {
       link.hidden = Boolean(query && section?.hidden);
     });
     empty.hidden = !query || visibleCount > 0;
+  };
+
+  input.addEventListener('input', filterLessons);
+  document.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
+    if ((event.key === '/' || (event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey))) && !typing) {
+      event.preventDefault();
+      input.focus();
+    }
+    if (event.key === 'Escape' && document.activeElement === input) {
+      input.value = '';
+      filterLessons();
+      input.blur();
+    }
   });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((link) => link.classList.toggle('is-active', link.dataset.navSection === entry.target.id));
+      });
+    }, { rootMargin: '-18% 0px -70% 0px' });
+    sections.forEach((section) => observer.observe(section));
+  }
 }
+
+window.AINBaseModule = { title, render };
+})();

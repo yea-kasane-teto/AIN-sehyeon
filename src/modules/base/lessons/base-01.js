@@ -1,3 +1,4 @@
+(() => {
 const lessonMarkup = `
   <header class="lesson-heading">
     <span class="eyebrow">BASE-01 · 첫 번째 개념</span>
@@ -142,7 +143,7 @@ const answers = {
   q3: { value: 'a', correct: '맞아요. 지도학습은 입력과 그에 대응하는 정답 예시를 함께 사용해요.', incorrect: '지도학습에서는 입력 데이터와 그에 대응하는 정답을 함께 준비해요.' },
 };
 
-export function renderBaseLesson(mount, setComplete) {
+function renderBaseLesson(mount, setComplete) {
   mount.innerHTML = lessonMarkup;
   setupExperiment(mount);
   setupQuiz(mount, setComplete);
@@ -228,9 +229,17 @@ function setupQuiz(mount, setComplete) {
   });
 
   const completeButton = mount.querySelector('#completeLesson');
-  let completed = localStorage.getItem('ain-progress:base-01') === 'done';
+  let completed = false;
+  try {
+    completed = localStorage.getItem('ain-progress:base-01') === 'done';
+  } catch {
+    completed = false;
+  }
   completeButton.addEventListener('click', () => {
     completed = !completed;
     setComplete(completed);
   });
 }
+
+window.AINBaseLesson = { render: renderBaseLesson };
+})();
