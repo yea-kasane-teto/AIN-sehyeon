@@ -7,7 +7,7 @@ export function render(root) {
     <div class="learning-app" id="top">
       <header class="topbar">
         <a class="brand" href="./?module=base" aria-label="AIN AI 기초 홈">
-          <span class="brand-mark" aria-hidden="true">AI</span>
+          <img class="brand-logo" src="./assets/ain-logo.png" alt="AIN 로고" />
           <span class="brand-name"><strong>AIN</strong><small>AI LEARNING AREA</small></span>
         </a>
         <label class="search-wrap" for="Search-bar">
@@ -15,7 +15,7 @@ export function render(root) {
           <input id="Search-bar" type="search" placeholder="AI 기초 내용 검색" autocomplete="off" />
           <kbd>Search-bar</kbd>
         </label>
-        <a class="home-link" href="https://github.com/yea-kasane-teto/AIN-main" target="_blank" rel="noopener noreferrer">AIN 메인 <span aria-hidden="true">↗</span></a>
+        <a class="home-link" href="https://github.com/yea-kasane-teto/AIN-main">AIN 메인 <span aria-hidden="true">↗</span></a>
       </header>
 
       <main>
@@ -57,7 +57,7 @@ export function render(root) {
         <div class="search-empty" id="searchEmpty" hidden><strong>검색 결과가 없어요.</strong><span>다른 단어로 다시 찾아보세요.</span></div>
       </main>
 
-      <footer class="site-footer"><a class="footer-brand" href="#top">AIN <span>AI LEARNING AREA</span></a><span>처음 배우는 AI, 원리부터 차근차근</span></footer>
+      <footer class="site-footer"><a class="footer-brand" href="#top"><img src="./assets/ain-logo.png" alt="AIN 로고" /><span>AI LEARNING AREA</span></a><span>처음 배우는 AI, 원리부터 차근차근</span></footer>
     </div>`;
 
   const content = root.querySelector('#lessonContent');
