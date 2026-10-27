@@ -3,7 +3,9 @@ const requestedModule = new URLSearchParams(window.location.search).get('module'
 const moduleRegistry = window.AINModuleRegistry || {};
 const definition = moduleRegistry[requestedModule];
 
-if (!definition) {
+if (requestedModule === 'ml' || requestedModule === 'machine-learning') {
+  window.location.replace('https://yea-kasane-teto.github.io/AIN-sanghyo/?module=ml');
+} else if (!definition) {
   document.title = '학습 영역을 찾을 수 없어요 | AIN';
   app.innerHTML = `
     <main class="not-found">
